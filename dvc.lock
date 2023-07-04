@@ -1,0 +1,117 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/cnnClassifier/pipeline/stage_01_data_ingestion.py
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: e5c32429040dffd6954c71334f74d8d9
+      size: 816
+    - path: src/cnnClassifier/pipeline/stage_01_data_ingestion.py
+      hash: md5
+      md5: 309229d12c7d8bfd3ab1fb1961767f13
+      size: 912
+    outs:
+    - path: artifacts/data_ingestion/Bird-species-data
+      hash: md5
+      md5: 7ab187ee9980dc543e7cc6d366e50435.dir
+      size: 24480890
+      nfiles: 1155
+  prepare_base_model:
+    cmd: python src/cnnClassifier/pipeline/stage_02_prepare_base_model.py
+    deps:
+    - path: config/config.yaml
+      hash: md5
+      md5: e5c32429040dffd6954c71334f74d8d9
+      size: 816
+    - path: src/cnnClassifier/pipeline/stage_02_prepare_base_model.py
+      hash: md5
+      md5: dd6f32a04e70093fcc4073cb138cdef2
+      size: 997
+    params:
+      params.yaml:
+        CLASSES: 7
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+        INCLUDE_TOP: false
+        LEARNING_RATE: 0.01
+        WEIGHTS: imagenet
+    outs:
+    - path: artifacts/prepare_base_model
+      hash: md5
+      md5: 855de49dbd7efc3c27820ddee96d52a4.dir
+      size: 118556320
+      nfiles: 2
+  training:
+    cmd: python src/cnnClassifier/pipeline/stage_03_training.py
+    deps:
+    - path: artifacts/data_ingestion/Bird-species-data
+      hash: md5
+      md5: 7ab187ee9980dc543e7cc6d366e50435.dir
+      size: 24480890
+      nfiles: 1155
+    - path: artifacts/prepare_base_model
+      hash: md5
+      md5: 855de49dbd7efc3c27820ddee96d52a4.dir
+      size: 118556320
+      nfiles: 2
+    - path: config/config.yaml
+      hash: md5
+      md5: e5c32429040dffd6954c71334f74d8d9
+      size: 816
+    - path: src/cnnClassifier/components/prepare_callbacks.py
+      hash: md5
+      md5: df047e424075dcab9aec144951712130
+      size: 1006
+    - path: src/cnnClassifier/pipeline/stage_03_training.py
+      hash: md5
+      md5: ae03c838f4c572711a7dd4f0035b4d91
+      size: 1256
+    params:
+      params.yaml:
+        AUGMENTATION: true
+        BATCH_SIZE: 16
+        EPOCHS: 1
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+    outs:
+    - path: artifacts/training/model.h5
+      hash: md5
+      md5: 4e41d88d87094c22b2f6cf78ec563887
+      size: 60341040
+  evaluation:
+    cmd: python src/cnnClassifier/pipeline/stage_04_evaluation.py
+    deps:
+    - path: artifacts/data_ingestion/Bird-species-data
+      hash: md5
+      md5: 7ab187ee9980dc543e7cc6d366e50435.dir
+      size: 24480890
+      nfiles: 1155
+    - path: artifacts/training/model.h5
+      hash: md5
+      md5: 4e41d88d87094c22b2f6cf78ec563887
+      size: 60341040
+    - path: config/config.yaml
+      hash: md5
+      md5: e5c32429040dffd6954c71334f74d8d9
+      size: 816
+    - path: src/cnnClassifier/pipeline/stage_04_evaluation.py
+      hash: md5
+      md5: 18d8a46a52eb6a0e625b1890cfa263c5
+      size: 883
+    params:
+      params.yaml:
+        BATCH_SIZE: 16
+        IMAGE_SIZE:
+        - 224
+        - 224
+        - 3
+    outs:
+    - path: scores.json
+      hash: md5
+      md5: 34ccc1b3d457847973f5f86aed81eefb
+      size: 74
