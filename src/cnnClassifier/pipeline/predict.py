@@ -7,13 +7,13 @@ class PredictionPipeline:
     def __init__(self, filename):
         self.filename = filename
         self.class_mapping = {
-            0: 'Alberts Towhee',
-            1: 'Alexandrine Parakeet',
-            2: 'Alpine Chough',
-            3: 'Altamira YellowThroat',
-            4: 'American Avocet',
-            5: 'American Bittern',
-            6: 'American Flamingo',
+            0: 'King Vulture',
+            1: 'Masked Lapwing',
+            2: 'Peacock',
+            3: 'Victoria Crowned Pigeon',
+            4: 'Violet Turaco',
+            5: 'Wilsons Bird of Paradise',
+            6: 'Woodland Kingfisher',
         }
 
     def predict(self):
